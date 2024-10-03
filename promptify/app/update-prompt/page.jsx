@@ -1,12 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Form from "@components/Form";
 
 const EditPrompt = () => {
   const router = useRouter();
-
   const searchParams = useSearchParams();
   const promptId = searchParams.get("id");
 
@@ -18,7 +17,7 @@ const EditPrompt = () => {
 
   useEffect(() => {
     const getPromptDetails = async () => {
-      const response = await fetch(`api/prompt/${promptId}`);
+      const response = await fetch(`/api/prompt/${promptId}`);
       const data = await response.json();
 
       setPost({
@@ -35,6 +34,7 @@ const EditPrompt = () => {
     setSubmitting(true);
 
     if (!promptId) return alert("Prompt ID not found");
+
     try {
       const response = await fetch(`/api/prompt/${promptId}`, {
         method: "PATCH",
@@ -65,4 +65,10 @@ const EditPrompt = () => {
   );
 };
 
-export default EditPrompt;
+const EditPromptPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditPrompt />
+  </Suspense>
+);
+
+export default EditPromptPage;
